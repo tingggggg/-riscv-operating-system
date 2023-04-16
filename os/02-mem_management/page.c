@@ -50,7 +50,7 @@ static inline int _is_free(struct Page *page)
     return !(page->flags & PAGE_TAKEN);
 }
 
-static inline int set_flag(struct Page *page, uint8_t flags)
+static inline int _set_flag(struct Page *page, uint8_t flags)
 {
     page->flags |= flags;
 }
@@ -88,4 +88,88 @@ void page_init()
 	printf("DATA:   0x%x -> 0x%x\n", DATA_START, DATA_END);
 	printf("BSS:    0x%x -> 0x%x\n", BSS_START, BSS_END);
 	printf("HEAP:   0x%x -> 0x%x\n", _alloc_start, _alloc_end);
+}
+
+/*
+ * Allocate a memory block which is composed of contiguous physical pages
+ * - npages: the number of PAGE_SIZE pages to allocate
+ */
+void *page_alloc(int npages)
+{
+    int found = 0;
+    struct Page *page_i = (struct Page *)HEAP_START;
+
+    for (int i = 0; i <= (_num_pages - npages); i++) {
+        if (_is_free(page_i)) {
+            found = 1;
+            /* 
+			 * meet a free page, continue to check if following
+			 * (npages - 1) pages are also unallocated.
+			 */
+            struct Page *page_j = page_i + 1;
+            for (int j = i + 1; j < (i + npages); j++) {
+                if (!_is_free(page_j)) {
+                    found = 0;
+                    break;
+                }
+                page_j++;
+            }
+            /*
+			 * get a memory block which is good enough for us,
+			 * take housekeeping, then return the actual start
+			 * address of the first page of this memory block
+			 */
+            if (found) {
+                struct Page *page_k = page_i;
+                for (int k = i; k < (i + npages); k++) {
+                    _set_flag(page_k, PAGE_TAKEN);
+                }
+                page_k--;
+                _set_flag(page_k, PAGE_LAST);
+                return (void *) (_alloc_start + i * PAGE_SIZE);
+            }
+        }
+        page_i++;
+    }
+    return NULL;
+}
+
+/*
+ * Free the memory block
+ * - p: start address of the memory block
+ */
+void page_free(void *p)
+{
+    /*
+	 * Assert (TBD) if p is invalid
+	 */
+    if (!p || (uint32_t)p >= _alloc_end) {
+        return;
+    }
+    /* get the first page descriptor of this memory block */
+    struct Page *page = (struct Page *)HEAP_START;
+    page += ((uint32_t)p - _alloc_start) / PAGE_SIZE;
+    /* loop and clear all the page descriptors of the memory block */
+    while (!_is_free(page)) {
+        if (_is_last(page)) {
+            _clear(page);
+            break;
+        } else {
+            _clear(page);
+            page++;
+        }
+    }
+}
+
+void page_test()
+{
+    void *p = page_alloc(2);
+    printf("p = 0x%x\n", p);
+
+    void *p2 = page_alloc(7);
+    printf("p2 = 0x%x\n", p2);
+    page_free(p2);
+
+    void *p3 = page_alloc(4);
+    printf("p3 = 0x%x\n", p3);
 }

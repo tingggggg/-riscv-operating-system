@@ -9,6 +9,8 @@ void start_kernel(void)
     uart_puts("Hello, RVOS!\n");
 
     page_init();
+
+    // page_test();
     
     while (1) {}; // loop here
 }

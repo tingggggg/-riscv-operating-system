@@ -10,7 +10,7 @@ void start_kernel(void)
 
     page_init();
 
-    // page_test();
+    page_test();
     
     while (1) {}; // loop here
 }

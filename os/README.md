@@ -98,7 +98,7 @@ void user_task1(void)
 
 #### result
 
-![Switch Result](https://github.com/tingggggg/riscv-operating-system/blob/main/os/04-multitask/image/result.png)
+![Switch Result](./04-multitask/image/result.png)
 
 ***
 
@@ -109,9 +109,15 @@ void user_task1(void)
     * Timer interrupt
     * Externel interrupt
 
-![Interrupt Arch Block](https://github.com/tingggggg/riscv-operating-system/blob/main/os/06-interrupts/images/interrupt_arch_block.png)
+![Interrupt Arch Block](./06-interrupts/images/interrupt_arch_block.png)
 
-![Mcause regs](https://github.com/tingggggg/riscv-operating-system/blob/main/os/06-interrupts/images/mcause_regs.png)
+<img src="./06-interrupts/images/mcause_regs.png" alt="Mcause regs" width="400">
 
 * Machine Interrupt Enable Register (mie)
-![MIEregs](https://github.com/tingggggg/riscv-operating-system/blob/main/os/06-interrupts/images/mie.png)
+
+<img src="./06-interrupts/images/mie.png" alt="MIE regs" width="400">
+
+* PLIC
+
+<img src="./06-interrupts/images/plic.png" alt="plic" width="400">
+<img src="./06-interrupts/images/plic_map.png" alt="plic map" width="400">

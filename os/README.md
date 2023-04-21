@@ -123,13 +123,13 @@ void user_task1(void)
 <img src="./06-interrupts/images/plic_map.png" alt="plic map" width="600">
 
 ```c
-    /* 
-	 * Set priority for UART0.
-	 *
-	 * Each PLIC interrupt source can be assigned a priority by writing 
-	 * to its 32-bit memory-mapped priority register.
-	 */
-    *(uint32_t *) PLIC_PRIORITY(UART0_IRQ) = 1;
+/* 
+ * Set priority for UART0.
+ *
+ * Each PLIC interrupt source can be assigned a priority by writing 
+ * to its 32-bit memory-mapped priority register.
+ */
+*(uint32_t *) PLIC_PRIORITY(UART0_IRQ) = 1;
 ```
 <img src="./06-interrupts/images/plic_priority.png" alt="plic priority" width="600">
 

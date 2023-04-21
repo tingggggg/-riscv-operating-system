@@ -96,7 +96,7 @@ void user_task1(void)
 ```
 
 
-#### resuls
+#### result
 
 ![Switch Result](https://github.com/tingggggg/riscv-operating-system/blob/main/os/04-multitask/image/result.png)
 

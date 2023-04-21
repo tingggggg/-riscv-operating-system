@@ -7,7 +7,7 @@ WIP
 
 ## Context Switch
 
-#### Implementation of switch
+### Implementation of switch
 ```asm
 .macro reg_save base
 	sw ra, 0(\base)
@@ -66,7 +66,7 @@ switch_to:
     ret
 ```
 
-#### Created two processes
+### Created two processes
 ```c
 void user_task0(void)
 {
@@ -96,7 +96,7 @@ void user_task1(void)
 ```
 
 
-#### result
+### result
 
 ![Switch Result](./04-multitask/image/result.png)
 
@@ -176,4 +176,6 @@ void external_interrupt_handler()
 ```
 <img src="./06-interrupts/images/plic_claim_complete.png" alt="plic claim complete" width="600">
 
-#### result
+### result
+
+<img src="./06-interrupts/images/result.png" alt="result" width="600">

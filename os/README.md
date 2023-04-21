@@ -204,4 +204,4 @@ reg_t trap_handler(reg_t epc, reg_t cause)
 
 ### result
 
-<img src="./06-interrupts/images/result.png" alt="result" width="600">
+![Interruput result](./06-interrupts/images/result.png)

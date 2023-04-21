@@ -111,3 +111,7 @@ void user_task1(void)
 
 ![Interrupt Arch Block](https://github.com/tingggggg/riscv-operating-system/blob/main/os/06-interrupts/images/interrupt_arch_block.png)
 
+![Mcause regs](https://github.com/tingggggg/riscv-operating-system/blob/main/os/06-interrupts/images/mcause_regs.png)
+
+* Machine Interrupt Enable Register (mie)
+![MIEregs](https://github.com/tingggggg/riscv-operating-system/blob/main/os/06-interrupts/images/mie.png)

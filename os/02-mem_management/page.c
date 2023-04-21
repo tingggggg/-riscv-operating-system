@@ -24,9 +24,9 @@ static uint32_t _alloc_end = 0;
 static uint32_t _num_pages = 0;
 
 
-#define PAGE_SIZE 4096
-#define PAGE_ORDER 12
-#define PAGE_RESERVED 80
+#define PAGE_SIZE_4K 4096
+#define PAGE_ORDER_4K 12
+#define PAGE_RESERVED_4K 80
 
 #define PAGE_TAKEN  (uint8_t)(1 << 0)
 #define PAGE_LAST   (uint8_t)(1 << 1)
@@ -65,7 +65,7 @@ static inline int _is_last(struct Page *page)
 
 static inline uint32_t _align_page(uint32_t address)
 {
-    uint32_t order = (1 << PAGE_ORDER) - 1;
+    uint32_t order = (1 << PAGE_ORDER_4K) - 1;
     return (address + order) & ~(order);
 }
 
@@ -90,17 +90,16 @@ void page_init()
 	 * We reserved 8 Page (8 x 4096) to hold the Page structures.
 	 * It should be enough to manage at most 128 MB (8 x 4096 x 4096) 
 	 */
-    _num_pages = (HEAP_SIZE / PAGE_SIZE) - PAGE_RESERVED;
+    uint32_t _total_num_page = (HEAP_SIZE / PAGE_SIZE_4K);
+    printf("TOTAL number of page: %d\n", _total_num_page);
+
+    _num_pages = (HEAP_SIZE / PAGE_SIZE_4K) - PAGE_RESERVED_4K;
     printf("HEAP_START = %x, HEAP_SIZE = %x, num of pages = %d\n", HEAP_START, HEAP_SIZE, _num_pages);
 
-    // struct Page *page = (struct Page *) HEAP_START;
-    // for (int i = 0; i < _num_pages; i++) {
-    //     _clear(page++);
-    // }
     _init_page_linked_list((void *) HEAP_START, _num_pages);
 
-    _alloc_start = _align_page(HEAP_START + PAGE_RESERVED * PAGE_SIZE);
-    _alloc_end = _alloc_start + (PAGE_SIZE * _num_pages);
+    _alloc_start = _align_page(HEAP_START + PAGE_RESERVED_4K * PAGE_SIZE_4K);
+    _alloc_end = _alloc_start + (PAGE_SIZE_4K * _num_pages);
 
     printf("TEXT:   0x%x -> 0x%x\n", TEXT_START, TEXT_END);
 	printf("RODATA: 0x%x -> 0x%x\n", RODATA_START, RODATA_END);
@@ -148,7 +147,7 @@ void *page_alloc(int npages)
                 _set_flag(page_k, PAGE_TAKEN);
                 _set_flag(page_k, PAGE_LAST);
 
-                return (void *) (_alloc_start + page_i->page_id * PAGE_SIZE);
+                return (void *) (_alloc_start + page_i->page_id * PAGE_SIZE_4K);
             }
 
         }
@@ -173,9 +172,7 @@ void page_free(void *p)
     }
     /* get the first page descriptor of this memory block */
     struct Page *page = (struct Page *)HEAP_START;
-    uint8_t page_id = ((uint32_t)p - _alloc_start) / PAGE_SIZE;
-
-    printf("page_id: %d\n", page_id);
+    uint8_t page_id = ((uint32_t)p - _alloc_start) / PAGE_SIZE_4K;
 
     // loop for find node of page by Page ID
     while (page) {

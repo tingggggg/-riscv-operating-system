@@ -103,5 +103,11 @@ void user_task1(void)
 ***
 
 ## Exception & Interrupt handling
-WIP
+
+* Three types of interrupt
+    * Software interrupt
+    * Timer interrupt
+    * Externel interrupt
+
+![Interrupt Arch Block](https://github.com/tingggggg/riscv-operating-system/blob/main/os/06-interrupts/images/interrupt_arch_block.png)
 

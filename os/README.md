@@ -121,3 +121,59 @@ void user_task1(void)
 
 <img src="./06-interrupts/images/plic.png" alt="plic" width="400">
 <img src="./06-interrupts/images/plic_map.png" alt="plic map" width="600">
+
+```c
+    /* 
+	 * Set priority for UART0.
+	 *
+	 * Each PLIC interrupt source can be assigned a priority by writing 
+	 * to its 32-bit memory-mapped priority register.
+	 */
+    *(uint32_t *) PLIC_PRIORITY(UART0_IRQ) = 1;
+```
+<img src="./06-interrupts/images/plic_priority.png" alt="plic priority" width="600">
+
+```c
+#define PLIC_MCLAIM(hart) (PLIC_BASE + 0x200004 + (hart) * 0x1000)
+#define PLIC_MCOMPLETE(hart) (PLIC_BASE + 0x200004 + (hart) * 0x1000)
+
+/* 
+ * DESCRIPTION:
+ *	Query the PLIC what interrupt we should serve.
+ */
+int plic_claim(void)
+{
+    int hart = r_tp();
+    int irq = *(uint32_t *) PLIC_MCLAIM(hart);
+    return irq;
+}
+
+/* 
+ * DESCRIPTION:
+  *	Writing the interrupt ID it received from the claim (irq) to the 
+ *	complete register would signal the PLIC we've served this IRQ. 
+ */
+void plic_complete(int irq)
+{
+    int hart = r_tp();
+    *(uint32_t *) PLIC_MCOMPLETE(hart) = irq;
+}
+
+void external_interrupt_handler()
+{
+    int irq = plic_claim();
+
+    if (irq == UART0_IRQ) {
+        uart_isr();
+    } else if (irq) {
+        printf("Unexpected interrupt irq = %d\n", irq);
+    }
+
+    if (irq) {
+        plic_complete(irq);
+    }
+}
+```
+<img src="./06-interrupts/images/plic_claim_complete.png" alt="plic claim complete" width="600">
+
+#### result

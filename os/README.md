@@ -8,7 +8,7 @@ WIP
 ## Context Switch
 
 #### Implementation of switch
-```assembly
+```asm
 .macro reg_save base
 	sw ra, 0(\base)
 	sw sp, 4(\base)

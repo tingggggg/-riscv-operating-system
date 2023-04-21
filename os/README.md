@@ -117,7 +117,7 @@ void user_task1(void)
 
 <img src="./06-interrupts/images/mie.png" alt="MIE regs" width="400">
 
-* PLIC
+* Platform-Level Interrupt Controller (PLIC)
 
 <img src="./06-interrupts/images/plic.png" alt="plic" width="400">
 <img src="./06-interrupts/images/plic_map.png" alt="plic map" width="600">

@@ -120,4 +120,4 @@ void user_task1(void)
 * PLIC
 
 <img src="./06-interrupts/images/plic.png" alt="plic" width="400">
-<img src="./06-interrupts/images/plic_map.png" alt="plic map" width="400">
+<img src="./06-interrupts/images/plic_map.png" alt="plic map" width="600">

@@ -173,6 +173,32 @@ void external_interrupt_handler()
         plic_complete(irq);
     }
 }
+
+reg_t trap_handler(reg_t epc, reg_t cause)
+{
+    reg_t return_pc = epc;
+    reg_t cause_code = cause & 0xfff;
+
+    if (cause & 0x80000000) {
+        switch (cause_code)
+        {
+        ...
+        case 11:
+            uart_puts("external interuption!\n");
+            external_interrupt_handler();
+            break;
+        default:
+            break;
+        }
+    } else {
+        /* Synchronous trap - exception */
+        printf("Sync exceptions!, code = %d\n", cause_code);
+        panic("PANIC");
+        // return_pc += 4;
+    }
+    
+    return return_pc;
+}
 ```
 <img src="./06-interrupts/images/plic_claim_complete.png" alt="plic claim complete" width="600">
 

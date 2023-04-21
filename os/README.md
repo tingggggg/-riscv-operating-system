@@ -102,6 +102,6 @@ void user_task1(void)
 
 ***
 
-## Interrupt handling
+## Exception & Interrupt handling
 WIP
 

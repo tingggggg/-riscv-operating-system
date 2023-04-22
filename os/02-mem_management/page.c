@@ -15,6 +15,9 @@ extern uint32_t BSS_END;
 extern uint32_t HEAP_START;
 extern uint32_t HEAP_SIZE;
 
+static uint32_t heap_4k_start;
+static uint32_t heap_256b_start;
+
 /*
  * _alloc_start points to the actual start address of heap pool
  * _alloc_end points to the actual end address of heap pool
@@ -25,10 +28,13 @@ static uint32_t _alloc_end = 0;
 static uint32_t _num_pages = 0;
 struct buddy *buddy_sys = 0;
 
+#define PAGE_SIZE_256B 256
+#define PAGE_ORDER_256B 8
 
 #define PAGE_SIZE_4K 4096
 #define PAGE_ORDER_4K 12
 #define PAGE_RESERVED_4K 80
+
 
 #define PAGE_TAKEN  (uint8_t)(1 << 0)
 #define PAGE_LAST   (uint8_t)(1 << 1)
@@ -65,7 +71,7 @@ static inline int _is_last(struct Page *page)
     return (page->flags & PAGE_LAST);
 }
 
-static inline uint32_t _align_page(uint32_t address)
+static inline uint32_t _align_page(uint32_t address, uint8_t page_order)
 {
     uint32_t order = (1 << PAGE_ORDER_4K) - 1;
     return (address + order) & ~(order);
@@ -125,12 +131,12 @@ void *page_alloc(int page_size)
  * Free the memory block
  * - p: start address of the memory block
  */
-void page_free(void *p)
+void page_free(void *p, uint32_t n_pages_type)
 {
     /*
 	 * Assert (TBD) if p is invalid
 	 */
-    if (!p || (uint32_t)p >= _alloc_end) {
+    if (!p || (uint32_t)p >= _alloc_end_4k) {
         return;
     }
 

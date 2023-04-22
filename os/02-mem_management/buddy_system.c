@@ -74,11 +74,9 @@ struct buddy *buddy_new(unsigned num_of_fragments, uint32_t heap_start)
     }
 
     /* alloacte an array to represent a complete binary tree */
-    // self = (struct buddy *) b_malloc(sizeof(struct buddy) 
-    //                                  + 2 * num_of_fragments * sizeof(uint32_t));
     self = (struct buddy *) heap_start;
-    uint32_t heap_end = heap_start + sizeof(struct buddy) + 
-                        2 * num_of_fragments * sizeof(uint32_t);
+    // uint32_t heap_end = heap_start + sizeof(struct buddy) + 
+    //                     2 * num_of_fragments * sizeof(uint32_t);
 
     self->size = num_of_fragments;
     node_size = num_of_fragments * 2;

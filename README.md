@@ -1,1 +1,1 @@
-# -riscv-operating-system
+# riscv-operating-system

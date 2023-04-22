@@ -1,7 +1,38 @@
 # Operating System Design and Implementation
 
 ## Memory Management
-WIP
+
+Using the buddy system to manage page memory allocation.
+
+<img src="./02-mem_management/images/buddy_system.png" alt="plic claim complete" width="600">
+
+```c
+void page_test()
+{   
+    printf("\n***** Page alloc test *****\n");
+    void *p = page_alloc(1 * KB);
+    printf("Allocate 1KB : 0x%x\n", p);
+
+    void *p2 = page_alloc(2 * KB);
+    printf("Allocate 2KB : 0x%x\n", p2);
+
+    void *p3 = page_alloc(4 * KB);
+    printf("Allocate 4KB : 0x%x\n", p3);
+
+    page_free(p2);
+    void *p4 = page_alloc(1 * KB);
+    printf("Allocate 1KB : 0x%x\n", p4);
+
+    void *p5 = page_alloc(2 * KB);
+    printf("Allocate 2KB : 0x%x\n", p5);
+
+    buddy_dump(buddy_sys);
+}
+```
+
+### result
+
+<img src="./02-mem_management/images/result.png" alt="plic claim complete" width="500">
 
 ***
 

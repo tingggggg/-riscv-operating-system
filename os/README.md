@@ -4,6 +4,8 @@
 
 Using the buddy system to manage page memory allocation.
 
+ref: https://github.com/lotabout/buddy-system
+
 <img src="./02-mem_management/images/buddy_system.png" alt="plic claim complete" width="600">
 
 ```c

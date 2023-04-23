@@ -2,7 +2,7 @@
 
 ## Memory Management
 
-Using the buddy system to manage page memory allocation.
+* Using the buddy system to manage page memory allocation.
 
 ref: https://github.com/lotabout/buddy-system
 
@@ -40,7 +40,7 @@ void page_test()
 
 ## Context Switch
 
-### Implementation of switch
+* Implementation of switch
 ```asm
 .macro reg_save base
 	sw ra, 0(\base)
@@ -99,7 +99,7 @@ switch_to:
     ret
 ```
 
-### Created two processes
+* Created two processes
 ```c
 void user_task0(void)
 {
@@ -344,3 +344,129 @@ reg_t trap_handler(reg_t epc, reg_t cause)
 ### result
 
 <img src="./07-hwtimer/images/result.png" alt="timer result" width="600">
+
+***
+
+## Preemptive
+
+* Preemptive Flowchart
+
+<img src="./08-preemptive/images/preemptive_process.png" alt="timer result" width="600">
+
+```assembly
+trap_vector:
+	# save all GP registers
+	...
+	# save mepc to context of current task
+	csrr	a0, mepc
+	sw	a0, 124(t5)
+	...
+	call	trap_handler
+    ...
+	mret
+```
+
+```assembly
+# void switch_to(struct context *next);
+switch_to:
+	# switch current context
+	csrw	mscratch, a0
+	# set mepc to the pc of the next task
+	lw	a1, 124(a0)
+	csrw	mepc, a1
+	# Restore all GP registers
+	...
+	mret
+```
+
+* Voluntarily yield CPU
+
+```c
+#define CLINT_BASE 0x2000000L
+#define CLINT_MSIP(hartid) (CLINT_BASE + 4 * (hartid))
+
+
+void task_yield()
+{   
+    /* trigger a machine-level software interrupt */
+    int id = r_mhartid();
+    *(uint32_t *) CLINT_MSIP(id) = 1;
+}
+```
+
+```c
+void timer_handler()
+{
+    /* Update next interval */
+    timer_load(TIMER_INTERVAL);
+
+    schedule();
+}
+
+reg_t trap_handler(reg_t epc, reg_t cause)
+{
+    reg_t return_pc = epc;
+    reg_t cause_code = cause & 0xfff;
+
+    if (cause & 0x80000000) {
+        switch (cause_code)
+        {
+        case 3:
+            uart_puts(" software interruption!\n");
+            /*
+			 * acknowledge the software interrupt by clearing
+    		 * the MSIP bit in mip.
+			 */
+            int id = r_mhartid();
+            *(uint32_t *) CLINT_MSIP(id) = 0;
+
+            /* Voluntarily yield CPU */
+            schedule();
+            break;
+        case 7:
+            uart_puts(" timer interruption!\n");
+            timer_handler();
+            break;
+        ...
+        default:
+            break;
+        }
+    } 
+    ...
+}
+```
+
+* Execute two processes
+
+```c
+void user_task0(void)
+{
+    uart_puts("Task 0: Created!\n");
+    char s[] = "12345";
+
+    task_yield();
+    uart_puts("Task 0: I'm back!\n");
+    while (1) {
+        for (int i = 0; i < 5; i++) {
+            uart_putc(s[i]);
+            task_delay(DELAY);
+        }
+    }
+}
+
+void user_task1(void)
+{
+    uart_puts("Task 1: Created!\n");
+    char s[] = "abcde";
+    while (1) {
+        for (int i = 0; i < 5; i++) {
+            uart_putc(s[i]);
+            task_delay(DELAY);
+        }
+    }
+}
+```
+
+### result
+
+<img src="./08-preemptive/images/result.png" alt="timer result" width="600">

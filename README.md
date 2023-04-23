@@ -9,6 +9,6 @@
 * [Exception & Interrupt handling](https://github.com/tingggggg/riscv-operating-system/tree/main/os#exception--interrupt-handling)
 
 
-* [Timer interrupt](https://github.com/tingggggg/riscv-operating-system/tree/main/os#timer-interrupt)
+* [Timer Interrupt](https://github.com/tingggggg/riscv-operating-system/tree/main/os#timer-interrupt)
 
 * [Preemptive](https://github.com/tingggggg/riscv-operating-system/tree/main/os#preemptive)

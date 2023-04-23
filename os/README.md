@@ -241,7 +241,7 @@ reg_t trap_handler(reg_t epc, reg_t cause)
 
 ***
 
-## Timer interrupt
+## Timer Interrupt
 
 * Initialize timer & timer interval
 

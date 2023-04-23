@@ -238,3 +238,109 @@ reg_t trap_handler(reg_t epc, reg_t cause)
 ### result
 
 ![Interruput result](./06-interrupts/images/result.png)
+
+***
+
+## Timer interrupt
+
+* Initialize timer & timer interval
+
+```c
+
+ /*
+  * The Core Local INTerruptor (CLINT) block holds memory-mapped control and
+  * status registers associated with software and timer interrupts.
+  * QEMU-virt reuses sifive configuration for CLINT.
+  * see https://gitee.com/qemu/qemu/blob/master/include/hw/riscv/sifive_clint.h
+  * enum {
+  * 	SIFIVE_SIP_BASE     = 0x0,
+  * 	SIFIVE_TIMECMP_BASE = 0x4000,
+  * 	SIFIVE_TIME_BASE    = 0xBFF8
+  * };
+  *
+  * enum {
+  * 	SIFIVE_CLINT_TIMEBASE_FREQ = 10000000
+  * };
+  *
+  * Notice:
+  * The machine-level MSIP bit of mip register are written by accesses to
+  * memory-mapped control registers, which are used by remote harts to provide
+  * machine-mode interprocessor interrupts.
+  * For QEMU-virt machine, Each msip register is a 32-bit wide WARL register
+  * where the upper 31 bits are tied to 0. The least significant bit is
+  * reflected in the MSIP bit of the mip CSR. We can write msip to generate
+  * machine-mode software interrupts. A pending machine-level software
+  * interrupt can be cleared by writing 0 to the MSIP bit in mip.
+  * On reset, each msip register is cleared to zero.
+  */
+#define CLINT_BASE 0x2000000L
+#define CLINT_MSIP(hartid) (CLINT_BASE + 4 * (hartid))
+#define CLINT_MTIMECMP(hartid) (CLINT_BASE + 0x4000 + 8 * (hartid))
+#define CLINT_MTIME (CLINT_BASE + 0xBFF8) // cycles since boot.
+
+/* 10000000 ticks per-second */
+#define CLINT_TIMEBASE_FREQ 10000000
+```
+
+```c
+/* load timer interval(in ticks) for next timer interrupt.*/
+void timer_load(int interval)
+{
+	/* each CPU has a separate source of timer interrupts. */
+	int id = r_mhartid();
+	
+	*(uint64_t*)CLINT_MTIMECMP(id) = *(uint64_t*)CLINT_MTIME + interval;
+}
+
+void timer_init()
+{
+	/*
+	 * On reset, mtime is cleared to zero, but the mtimecmp registers 
+	 * are not reset. So we have to init the mtimecmp manually.
+	 */
+	timer_load(TIMER_INTERVAL);
+
+	/* enable machine-mode timer interrupts. */
+	w_mie(r_mie() | MIE_MTIE);
+
+	/* enable machine-mode global interrupts. */
+	w_mstatus(r_mstatus() | MSTATUS_MIE);
+}
+```
+
+* Timer interrupt handler
+
+```c
+void timer_handler()
+{
+    _tick++;
+    printf("tick: %d\n", _tick);
+
+    /* Update next interval */
+    timer_load(TIMER_INTERVAL);
+}
+
+reg_t trap_handler(reg_t epc, reg_t cause)
+{
+	...
+	if (cause & 0x80000000) {
+		/* Asynchronous trap - interrupt */
+		switch (cause_code) {
+		...
+		case 7:
+			uart_puts("timer interruption!\n");
+			timer_handler();
+			break;
+		...
+			break;
+		}
+	} else {
+		...
+	}
+    ...
+}
+```
+
+### result
+
+<img src="./07-hwtimer/images/result.png" alt="timer result" width="500">

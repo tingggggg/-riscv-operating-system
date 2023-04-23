@@ -343,4 +343,4 @@ reg_t trap_handler(reg_t epc, reg_t cause)
 
 ### result
 
-<img src="./07-hwtimer/images/result.png" alt="timer result" width="500">
+<img src="./07-hwtimer/images/result.png" alt="timer result" width="600">

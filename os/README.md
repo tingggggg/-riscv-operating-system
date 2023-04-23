@@ -343,7 +343,7 @@ reg_t trap_handler(reg_t epc, reg_t cause)
 
 ### result
 
-<img src="./07-hwtimer/images/result.png" alt="timer result" width="600">
+<img src="./07-hwtimer/images/result.png" alt="timer result" width="700">
 
 ***
 
@@ -469,4 +469,4 @@ void user_task1(void)
 
 ### result
 
-<img src="./08-preemptive/images/result.png" alt="timer result" width="600">
+<img src="./08-preemptive/images/result.png" alt="timer result" width="700">

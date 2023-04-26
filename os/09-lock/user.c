@@ -1,8 +1,8 @@
 #include "os.h"
 
 #define DELAY 4000
-// #define USE_SPIN_LOCK
-#define USE_MUTEX
+#define USE_SPIN_LOCK
+// #define USE_MUTEX
 
 extern void trap_test();
 

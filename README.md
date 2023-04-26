@@ -12,3 +12,5 @@
 * [Timer Interrupt](https://github.com/tingggggg/riscv-operating-system/tree/main/os#timer-interrupt)
 
 * [Preemptive](https://github.com/tingggggg/riscv-operating-system/tree/main/os#preemptive)
+
+* [System Call](https://github.com/tingggggg/riscv-operating-system/tree/main/os#system-call)

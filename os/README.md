@@ -470,3 +470,58 @@ void user_task1(void)
 ### result
 
 <img src="./08-preemptive/images/result.png" alt="timer result" width="700">
+
+***
+
+## System Call
+
+### Switching to system mode
+
+<img src="./11-syscall/images/switch.png" alt="switch" width="450">
+
+<img src="./11-syscall/images/switch2.png" alt="switch2" width="450">
+
+### The execution process of a system call
+
+* Do `return_pc += 4` to set the `program counter` to `ret` that after the `ecall`
+
+<img src="./11-syscall/images/sys_process.png" alt="syscall process" width="600">
+
+* `trap_handler`
+
+```c
+reg_t trap_handler(reg_t epc, reg_t cause, struct context *cxt)
+{
+    reg_t return_pc = epc;
+    reg_t cause_code = cause & 0xfff;
+
+    if (cause & 0x80000000) {
+        /* Asynchronous trap - interrupt */
+        switch (cause_code)
+        {
+        ...
+        default:
+            break;
+        }
+    } else {
+        /* Synchronous trap - exception */
+        printf("Sync exceptions!, code = %d\n", cause_code);
+        switch (cause_code) {
+        case 8:
+            uart_puts("System call from U-mode!\n");
+			do_syscall(cxt);
+			return_pc += 4;
+            break;
+        default:
+            panic("PANIC");
+            // return_pc += 4;
+            break;
+        }
+    }
+    return return_pc;
+}
+```
+
+### result
+
+<img src="./11-syscall/images/result.png" alt="result" width="600">

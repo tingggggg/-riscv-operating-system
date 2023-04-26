@@ -524,4 +524,4 @@ reg_t trap_handler(reg_t epc, reg_t cause, struct context *cxt)
 
 ### result
 
-<img src="./11-syscall/images/result.png" alt="result" width="600">
+<img src="./11-syscall/images/result.png" alt="result" width="700">
